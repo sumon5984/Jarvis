@@ -21,24 +21,26 @@ const {
     isPrivate,
     toAudio,
     toVideo,
-    getJson,
-    postJson,
-    AddMp3Meta,
     sendUrl,
-    getBuffer,
     webpToPng,
     webp2mp4,
     setData,
     getData,
-    IronMan,
     translate,
-    extractUrlsFromText,
     makeUrl
 } = require("../lib/");
 const { 
     trim,
-    elevenlabs,
+    getJson,
+    IronMan,
+    postJson,
     removeBg,
+    getBuffer,
+    cropImage,
+    AddMp3Meta,
+    elevenlabs,
+    cropToCircle,
+    extractUrlsFromText,
     createRoundSticker
 } = require("./client/"); 
 const stickerPackNameParts = config.STICKER_PACKNAME.split(";");
@@ -162,13 +164,31 @@ System({
 System({
     pattern: "circle",
     fromMe: isPrivate,
-    desc: "Changes photo to sticker",
+    desc: "Make circle photo or sticker",
     type: "converter",
 }, async (message) => {
    if (!(message.image || message.reply_message.sticker || message.reply_message.image)) return await message.reply("_*Reply to photo or sticker*_");
    if (message.reply_message.isAnimatedSticker) return await message.reply("_Reply to a non-animated sticker message_");
    let media = await message.downloadMediaMessage(message.image ? message : message.quoted ? message.reply_message : null);
+   if(message.image || message.reply_message.image) {
+       return await message.send(await cropToCircle(media), {}, 'image');
+   };
    await message.send(await createRoundSticker(media), { packname: stickerPackNameParts[0], author: stickerPackNameParts[1] }, "sticker");
+});
+
+System({
+    pattern: "crop",
+    fromMe: isPrivate,
+    desc: "crop image or sticker",
+    type: "converter",
+}, async (message) => {
+   if (!(message.image || message.reply_message.sticker || message.reply_message.image)) return await message.reply("_*Reply to photo or sticker*_");
+   if (message.reply_message.isAnimatedSticker) return await message.reply("_Reply to a non-animated sticker message_");
+   if(message.image || message.reply_message.image) {
+       let media = await message.downloadMediaMessage(message.image ? message : message.quoted ? message.reply_message : null);
+       return await message.send(await cropImage(media), {}, 'image');
+   };
+   await message.send(await cropImage(await webpToPng(await message.reply_message.downloadAndSave())), { packname: stickerPackNameParts[0], author: stickerPackNameParts[1] }, "sticker");
 });
 
 System({
@@ -266,16 +286,6 @@ System({
 });
 
 System({
-    pattern: 'tovv ?(.*)',
-    desc: "convert media to view ones",
-    type: 'converter',
-    fromMe: true
-}, async (message, match) => {
-    if (!(message.image && message.video && (message.quoted && (message.reply_message.image || message.reply_message.audio || message.reply_message.video)))) return await message.client.forwardMessage(message.jid, message.image || message.video? message : message.reply_message, { viewOnce: true });
-    await message.reply("_*Reply to an image, video, or audio to make it viewable*_");
-});
-
-System({
     pattern: "url",
     fromMe: isPrivate,
     desc: "make media into url",
@@ -328,19 +338,6 @@ System({
         if (!output) return m.reply("*Please check your format. The correct format is .trim 1.0,3.0*");
         await m.reply(output, { mimetype: "audio/mp4" }, "audio");
     }
-});
-
-
-System({
-    pattern: 'bitly ?(.*)',
-    fromMe: isPrivate,
-    desc: 'Shortern a URL using Bitly',
-    type: 'converter',
-}, async (message, text) => {
-    const longUrl = (await extractUrlsFromText(text || message.reply_message.text))[0];
-    if (!longUrl) return await message.reply('*Please provide a URL to shorten.*');
-    const { result } = await getJson(api + "tools/bitly?q=" + longUrl);
-    await message.send(`*SHORT URL:* ${result.link}`, { quoted: message.data });
 });
 
 

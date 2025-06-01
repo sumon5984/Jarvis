@@ -21,9 +21,9 @@ let AFK = {
 
 System({
 	on: 'all',
-	fromMe: false
+	fromMe: false,
+	dontAddCommandList: true
 }, async (message, match) => {
-	if(message.isBot) return;
 	if(message.fromMe) return;
 	if (!AFK.isAfk)  return;
 	if(!message.mention.isBotNumber && !message.quoted && message.isGroup)  return;
@@ -52,9 +52,9 @@ System({
 
 System({
 	on: 'text',
-	fromMe: true
+	fromMe: true,
+	dontAddCommandList: true
 }, async (message, match) => {
-	if(message.isBot) return;
 	if(message.sender !== message.user.jid) return;
 	if (!AFK.isAfk)  return;
 	AFK.lastseen = 0;
@@ -69,7 +69,6 @@ System({
 	desc: 'away from keyboard'
 }, async (message, match) => {
 	if (AFK.isAfk) return;
-        if(message.isBot) return;
 	AFK.lastseen = Math.round((new Date()).getTime() / 1000);
 	if (match !== '') AFK.reason = match;
 	AFK.isAfk = true;

@@ -13,17 +13,14 @@ Jarvis - Loki-Xer
 const {
     bot,
     Vote,
-    isUrl,
-    sleep,
     System,
     config,
     getData,
     setData,
     isPrivate,
-    warnMessage,
-    extractUrlsFromText
+    warnMessage
 } = require("../lib/");
-const { parsedJid, isAdmin, isBotAdmins, getAllGroups } = require("./client/");
+const { parsedJid, isAdmin, isBotAdmins, getAllGroups, isUrl, sleep, extractUrlsFromText } = require("./client/");
 
 System({
     pattern: 'add ?(.*)',
@@ -33,7 +30,7 @@ System({
     desc: "add a person to group"
 }, async (message, match) => {
     match = message.reply_message?.sender || match;
-    let isadmin = await isAdmin(message, message.user.jid);
+    let isadmin = await isBotAdmins(message);
     if (!isadmin) return await message.reply("_I'm not admin_");
     if (!match) return await message.reply("_Reply to user or need number_\n*Example:* .add 919876543210_");
     match = match.replaceAll(' ', '');
@@ -41,7 +38,7 @@ System({
         let users = match.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
         let info = await message.client.onWhatsApp(users);
         let ex = info.map((jid) => jid.jid);
-        if (!ex.includes(users)) return await message.reply('h');
+        if (!ex.includes(users)) return await message.reply('_*user not found*_');
         const su = await message.client.groupParticipantsUpdate(message.jid, [users], "add");
         if (su[0].status == 403) {
             await message.reply("_Couldn't add. Invite sent!_");
@@ -51,7 +48,7 @@ System({
                 mentions: [users]
             });
             const code = await message.client.groupInviteCode(message.jid);
-            return await message.client.sendMessage(users, { text: `https://chat.whatsapp.com/${code}` });
+            return await message.send(`https://chat.whatsapp.com/${code}`, {}, "text", users);
         } else if (su[0].status == 401) {
             return await message.send(`Couldn't add @${users.split("@")[0]} because they blocked the bot number.`, {
                 mentions: [users]
@@ -81,7 +78,7 @@ System({
 }, async (message, match) => {
     match = message.mention?.jid?.[0] || message.reply_message?.sender || match;
     if (!match) return await message.reply("_Reply to someone/mention_\n*Example:* .kick @user or kick all");    
-    if (!await isAdmin(message, message.user.jid)) return await message.send("_I'm not an admin_");
+    if (!await isBotAdmins(message)) return await message.send("_I'm not an admin_");
     if (match === "all") {
         let { participants } = await message.client.groupMetadata(message.jid);
         participants = participants.filter(p => p.id !== message.user.jid);       
@@ -110,7 +107,7 @@ System({
 }, async (message, match) => {
 	match = message.mention.jid?.[0] || message.reply_message.sender || match
 	if (!match) return await message.reply("_Reply to someone/mention_\n*Example:* . promote @user");
-	let isadmin = await isAdmin(message, message.user.jid);
+	let isadmin = await isBotAdmins(message);
 	if (!isadmin) return await message.reply("_I'm not admin_");
 	let jid = parsedJid(match);
 	await await message.client.groupParticipantsUpdate(message.jid, jid, "promote");
@@ -128,7 +125,7 @@ System({
 }, async (message, match) => {
 	match = message.mention.jid?.[0] || message.reply_message.sender || match
 	if (!match) return await message.reply("_Reply to someone/mention_\n*Example:* . demote @user");
-	let isadmin = await isAdmin(message, message.user.jid);
+	let isadmin = await isBotAdmins(message);
 	if (!isadmin) return await message.reply("_I'm not admin_");
 	let jid = parsedJid(match);
 	await await message.client.groupParticipantsUpdate(message.jid, jid, "demote");
@@ -144,7 +141,7 @@ System({
     adminAccess: true,
     desc: "Provides the group's invitation link."
 }, async (message) => {
-    let isadmin = await isAdmin(message, message.user.jid);
+    let isadmin = await isBotAdmins(message);
     if (!isadmin) return await message.reply("_I'm not admin_");
     const data = await message.client.groupInviteCode(message.jid);
     return await message.reply(`https://chat.whatsapp.com/${data}`);
@@ -159,7 +156,7 @@ System({
 	adminAccess: true,
 	desc: "nute group",
 }, async (message) => {
-	let isadmin = await isAdmin(message, message.user.jid);
+	let isadmin = await isBotAdmins(message);
 	if (!isadmin) return await message.reply("_I'm not admin_");
 	const mute = await message.reply("_Muting Group_");
 	await sleep(500);
@@ -175,7 +172,7 @@ System({
 	adminAccess: true,
 	desc: "unmute group"
 }, async (message) => {
-	let isadmin = await isAdmin(message, message.user.jid);
+	let isadmin = await isBotAdmins(message);
 	if (!isadmin) return await message.reply("_I'm not admin_");
 	const mute = await message.reply("_Unmuting Group_");
 	await sleep(500);
@@ -190,11 +187,11 @@ System({
     adminAccess: true,
     desc: "mention all users in the group"
 }, async (message, match) => {
-    if (!message.isGroup) return await message.reply(`@${message.sender.split("@")[0]}`, { mentions: [message.sender] });   
+    if (!message.isGroup) return await message.reply(`@${message.sender.split("@")[0]}`, { mentions: [message.sender], emitOnUpsert: true });   
     const { participants } = await message.client.groupMetadata(message.from).catch(e => {});
     let admins = await participants.filter(v => v.admin !== null).map(v => v.id);
     let msg = "";
-    if (match === "all" || match === "everyone") {
+    if (match === "all") {
         for (let i = 0; i < participants.length; i++) {
             msg += `${i + 1}. @${participants[i].id.split('@')[0]}\n`;
         }
@@ -204,8 +201,14 @@ System({
             msg += `${i + 1}. @${admins[i].split('@')[0]}\n`;
         }
         return await message.send(msg, { mentions: admins });
+    } else if(match === "everyone") {
+	return await message.send('@' + message.from, { contextInfo: { groupMentions: [{ groupJid: message.from, groupSubject: 'everyone' }], mentionedJid: participants?.map(a => a.id) || [] } });
+    } else if (match == 'notadmin' || match == 'notadmins' || match == 'not admins' || match == 'not admin' || match == 'non admins' || match == 'non admin') {
+      const mentionedJid = participants.filter((user) => !!user.admin != true).map(({ id }) => id)
+      mentionedJid.forEach((e) => (msg += `@${e.split('@')[0]}\n`))
+      return await message.send(msg.trim(), { contextInfo: { mentionedJid }, });
     } else if (match === "me" || match === "mee") {
-        await message.send(`@${message.sender.split("@")[0]}`, { mentions: [message.sender] });
+        await message.send(`@${message.sender.split("@")[0]}`, { mentions: [message.sender], emitOnUpsert: true });
     } else if (match || message.reply_message.text) {
         match = match || message.reply_message.text;
         if (!match) return await message.reply('*Example :* \n_*tag all*_\n_*tag admin*_\n_*tag text*_\n_*Reply to a message*_');
@@ -225,7 +228,7 @@ System({
     adminAccess: true,
     desc: "Set full-screen profile picture",
 }, async (message, match) => {
-    let isadmin = await isAdmin(message, message.user.jid);
+    let isadmin = await isBotAdmins(message);
     if (!isadmin) return await message.reply("_I'm not an admin_");
     if(match && match === "remove") {
         await message.client.removeProfilePicture(message.jid);
@@ -245,7 +248,7 @@ System({
     adminAccess: true,
     desc: "Revoke Group invite link.",
 }, async (message) => {
-    let isadmin = await isAdmin(message, message.user.jid);
+    let isadmin = await isBotAdmins(message);
     if (!isadmin) return await message.reply("_I'm not admin_");
     await message.client.groupRevokeInvite(message.jid)
     await message.send('_Revoked_');
@@ -289,7 +292,7 @@ System({
     adminAccess: true,
     desc: "only allow admins to modify the group's settings",
 }, async (message, match) => {
-    let isadmin = await isAdmin(message, message.user.jid);
+    let isadmin = await isBotAdmins(message);
     if (!isadmin) return await message.reply("_I'm not admin_");
     const meta = await message.client.groupMetadata(message.chat)
     if (meta.restrict) return await message.send("_Already only admin can modify group settings_")
@@ -304,7 +307,7 @@ System({
     onlyGroup: true,
     desc: "allow everyone to modify the group's settings -- like display picture etc.",
 }, async (message, match) => {
-    let isadmin = await isAdmin(message, message.user.jid);
+    let isadmin = await isBotAdmins(message);
     if (!isadmin) return await message.reply("_bot not admin_");
     const meta = await message.client.groupMetadata(message.jid);
     if (!meta.restrict) return await message.send("_Already everyone can modify group settings_")
@@ -412,7 +415,7 @@ System({
         let user = message.mention.jid?.[0] || message.reply_message.sender;
 	if (!user) return message.reply("_Reply to someone/mention_\n*Example:* . warn @user\n_To reset warn_\n*Example:* .warn reset");
 	const jid = parsedJid(user);
-	let isBotAdmin = await isAdmin(message, message.user.jid);
+	let isBotAdmin = await isBotAdmins(message);
 	if(!isBotAdmin) return await message.reply("_I'm not admin_");
 	let userIsAdmin = await isAdmin(message, user);
 	if(userIsAdmin) return await message.send(`_user is admin @${jid[0].split("@")[0]}_`, { mentions: jid });
@@ -502,7 +505,7 @@ System({
       await setData(message.jid, action, "true", "autoMute");
       return await message.send("*Automute has been enabled in this group ✅*");       
    };
-   var admin = await isAdmin(message, message.user.jid);
+   var admin = await isBotAdmins(message);
    if (!admin) return await message.send("_I'm not an admin_");
    await setData(message.jid, match, "true", "autoMute");
    await message.send(`*_Group will auto mute at ${match}, rebooting.._*`);
@@ -528,7 +531,7 @@ System({
       await setData(message.jid, action, "true", "autoUnmute");
       return await message.send("*Autounmute has been enabled in this group ✅*");       
    };
-   var admin = await isAdmin(message, message.user.jid);
+   var admin = await isBotAdmins(message);
    if (!admin) return await message.send("_I'm not an admin_");
    await setData(message.jid, match, "true", "autoUnmute");
    await message.send(`*_Group will auto unmute at ${match}, rebooting.._*`)
@@ -549,7 +552,6 @@ System({
    return message.reply("*Scheduled Mutes/Unmutes*\n\n" + msg);
 });
 
-
 System({
     pattern: "glist",
     fromMe: true,
@@ -559,8 +561,8 @@ System({
     desc: 'list group join requests'
 }, async (message, match) => {
    const result = await message.client.groupRequestParticipantsList(message.jid);
-   if (!result.length) return await message.send('_*No pending requests*_');
-   await message.send("*Pending requests list*\n\n" + result.map((id) => `+${id.jid.split('@')[0]}`).join('\n'));
+   if (!result.length) return await message.send('_*no pending requests*_');
+   await message.send("*pending requests list*\n\n" + result.map((id) => `+${id.jid.split('@')[0]}`).join('\n'));
 });
 
 System({
@@ -571,8 +573,8 @@ System({
     adminAccess: true,
     desc: 'accept all group join request',
 }, async (message, match) => {
-    if (!(await isAdmin(message, message.user.jid))) return await message.send("_I'm not an admin_");
-    if (!match) return await message.reply("_Provide a number, e.g., gapprove all or gapprove: 917025673121, 4915147867879_");
+    if (!(await isBotAdmins(message))) return await message.send("_I'm not an admin_");
+    if (!match) return await message.reply("_Provide a match, e.g., gapprove all or gapprove: 917025673121, 4915147867879_");
     const result = await message.client.groupRequestParticipantsList(message.jid);
     if (!result.length) return await message.send('_*No pending requests*_');
     const jids = match === "all" ? result.map(id => id.jid) : match.split(',').map(num => num.trim().replace(/\+/g, '').replace(/\s/g, '') + '@s.whatsapp.net').filter(jid => jid !== '@s.whatsapp.net'); 
@@ -592,8 +594,8 @@ System({
     adminAccess: true,
     desc: 'reject all group request',
 }, async (message, match) => {
-    if (!(await isAdmin(message, message.user.jid))) return await message.send("_I'm not an admin_");
-    if (!match) return await message.reply("_Provide a number, e.g., greject all or greject 917025673121, 4915147867879_");
+    if (!(await isBotAdmins(message))) return await message.send("_I'm not an admin_");
+    if (!match) return await message.reply("_Provide a match, e.g., greject all or greject 917025673121, 4915147867879_");
     const result = await message.client.groupRequestParticipantsList(message.jid);
     if (!result.length) return await message.send('_*No pending requests*_');
     const jids = match === "all" ? result.map(id => id.jid) : match.split(',').map(num => num.trim().replace(/\+/g, '').replace(/\s/g, '') + '@s.whatsapp.net').filter(jid => jid !== '@s.whatsapp.net'); 
@@ -602,6 +604,6 @@ System({
         await message.client.groupRequestParticipantsUpdate(message.jid, [jid], 'reject');
         await sleep(800);
     };
-    await message.send(match === "all" ? '_*Rejected all*_' : '_*Rejected selected members*_');
+    await message.send(match === "all" ? '_*Reject all*_' : '_*Reject selected members*_');
 });
 

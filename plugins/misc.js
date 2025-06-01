@@ -10,26 +10,26 @@ Jarvis - Loki-Xer
 ------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 const {
-    isUrl,
+    isJid,
     System,
     config,
-    getJson,
-    postJson,
-    isPrivate,
-    extractUrlsFromText 
+    isPrivate 
 } = require("../lib/");
+const { isUrl, extractUrlsFromText } = require('./client/');
   
   
 System({
-      pattern: "wm",
-      fromMe: isPrivate,
-      desc: "wame generator",
-      type: "misc",
-},async (message, match) => {
-      if (!message.quoted) return message.reply("_*Reply to a user*_");
-      let sender = 'https://wa.me/' + (message.reply_message.sender || message.mention[0] || message.text).split('@')[0];
-      await message.reply(sender);
+    pattern: "wm",
+    fromMe: isPrivate,
+    desc: "wame generator",
+    type: "misc",
+}, async (message, match) => {
+    if (!message.quoted) return message.reply("_*Reply to a user*_");
+    let sender = message.reply_message?.sender || message.mention?.[0] || message.text;
+    if (!isJid(sender)) return message.reply("*Can't find number*");
+    return await message.reply('https://wa.me/' + sender.split('@')[0]);
 });
+
 
 System({
   pattern: 'ss ?(.*)',
@@ -54,24 +54,23 @@ System({
   });
 
 
-  System({
+System({
       pattern: 'whois ?(.*)',
       fromMe: isPrivate,
       desc: 'to find how is',
-      type: "info",
+      type: 'whatsapp',
   }, async (message, match) => {
-     let status;
-     let user = message.quoted ? message.reply_message.sender : match.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
-     if (!user) return message.reply('_Reply to someone/mention_\n*Example:* . whois @user');
-     try { status = await message.client.fetchStatus(user); } catch { status = 'private'; }
-      let pp = await message.getPP(user);
-      const date = new Date(status.setAt);
-      const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }; 
-      let wm = 'https://wa.me/' + user.split('@')[0];
-      const setAt = date.toLocaleString('en-US', options);
-      const NaMe = await message.store.getName(user);
-      await message.send({ url: pp }, { caption: `*Name :* ${NaMe}\n*About :* ${status.status}\n*About Set Date :* ${setAt}\n*whatsapp :* ${wm}`, quoted: message }, 'image');
-  });
+      let user = message.quoted ? message.reply_message.sender : `${match.replace(/[^0-9]/g, '')}@s.whatsapp.net`;
+      if (!user) return message.reply('_Reply to someone or mention_\n*Example:* .whois @user');
+      let [pp, name] = await Promise.all([message.getPP(user), message.store.getName(user)]);
+      let [statusObj] = await message.client.fetchStatus(user).catch(() => ([{ status: 'private' }]));
+      let aboutText = (statusObj.status && statusObj.status.status) || 'private';
+      let setAtDate = statusObj.status && statusObj.status.setAt;
+      let formattedSetAt = setAtDate ? new Date(setAtDate).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }) : 'Not available';
+      let caption = `*Name:* ${name}\n`;
+      caption += isJid(user) ? `*About:* ${aboutText}${formattedSetAt ? `\n*About Set Date:* ${formattedSetAt}` : ''}\n*WhatsApp:* https://wa.me/${user.split('@')[0]}` : '*About:* Number is Private';
+      await message.send({ url: pp }, { caption, quoted: message }, 'image');
+});
   
   System({
       pattern: 'tts ?(.*)',
@@ -96,24 +95,3 @@ System({
       }
   });
   
-  
-  System({
-      on: 'text',
-      fromMe: isPrivate,
-      dontAddCommandList: true,
-  },async (message) => {
-      if (message.quoted && (!message.isBot || !message.reply_message?.fromMe || !message.reply_message?.text)) return;
-      if (!message.body.includes('@') || !message.body.includes('‣')) return;
-      if (message.body.includes("1")) {
-          const text = message.body.split(" ");
-          const { result: tempmail } = await postJson(api + "tools/tempmail", { q: text[2] });
-      if (tempmail.length === 0) return message.reply("_*Mail box is empty*_");
-          const formattedResponse = `\n  *Temp Mail ✉️*\n\n${tempmail.map((mail, index) => `\n  • *From :* ${mail.from}\n  • *Subject :* ${mail.subject}\n  • *Date :* ${mail.date}\n  • *Id :* ${mail.id}\n  • *Mail Number:* ${index + 1}`).join("\n\n")}`;
-          await message.send(formattedResponse);
-      } else if (message.body.includes("2")) {
-         const { result: data } = await getJson(api + "tools/tempmail");
-         const user = await message.store.getName(message.sender);
-         const { result: tempmail } = await postJson(api + "tools/tempmail", { q: data });
-         await message.send(`*_${data}_*\n\n*Dear user, this is your temp mail*\n\n*User: ${user}*\n*Mail received: ${tempmail.length}*\n\n\`\`\`1 ‣\`\`\` *Check mail*\n\`\`\`2 ‣\`\`\` *Next mail*\n\n*_Send a Number as reply_*`);
-      }
-  });

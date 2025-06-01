@@ -10,33 +10,29 @@ Jarvis - Loki-Xer
 ------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 
-const { System, IronMan, isPrivate, getJson } = require("../lib/");
-
+const { System, isPrivate, config } = require("../lib/");
+const { IronMan, getJson } = require('./client/');
 
 System({
-    pattern: 'ig ?(.*)',
-    fromMe: isPrivate,
-    desc: 'Instagram profile details',
-    type: 'stalk',
-}, async (message, match) => {
-    if (!match) return await message.reply("*Need a username*\n_Example: .ig sedboy.am_");
-    var data = await getJson(IronMan(`ironman/igstalk?id=${encodeURIComponent(match.trim())}`));
-    var caption = '';
-    if (data.name) caption += `*𖢈ɴᴀᴍᴇ:* ${data.name}\n`;
-    if (data.username) caption += `*𖢈ᴜꜱᴇʀɴᴀᴍᴇ:* ${data.username}\n`;
-    if (data.bio) caption += `*𖢈ʙɪᴏ:* ${data.bio}\n`;
-    if (data.pronouns && data.pronouns.length > 0) caption += `*𖢈ᴘʀᴏɴᴏᴜɴꜱ:* ${data.pronouns.join(', ')}\n`;
-    if (data.followers) caption += `*𖢈ꜰᴏʟʟᴏᴡᴇʀꜱ:* ${data.followers}\n`;
-    if (data.following) caption += `*𖢈ꜰᴏʟʟᴏᴡɪɴɢ:* ${data.following}\n`;
-    if (data.category) caption += `*𖢈ᴄᴀᴛᴇɢᴏʀʏ:* ${data.category}\n`;
-    if (typeof data.private !== 'undefined') caption += `*𖢈ᴘʀɪᴠᴀᴛᴇ ᴀᴄᴄ:* ${data.private}\n`;
-    if (typeof data.business !== 'undefined') caption += `*𖢈ʙᴜꜱꜱɪɴᴇꜱ ᴀᴄᴄ:* ${data.business}\n`;
-    if (data.email) caption += `*𖢈ᴇᴍᴀɪʟ:* ${data.email}\n`;
-    if (data.url) caption += `*𖢈ᴜʀʟ:* ${data.url}\n`;
-    if (data.contact) caption += `*𖢈ɴᴜᴍʙᴇʀ:* ${data.contact}\n`;
-    if (data.action_button) caption += `*𖢈ᴀᴄᴛɪᴏɴ ʙᴜᴛᴛᴏɴ:* ${data.action_button}\n`;
-    await message.send({ url: data.hdpfp }, { caption: caption.trim(), quoted: message }, "image");
+  pattern: 'ig ?(.*)',
+  fromMe: isPrivate,
+  desc: 'Instagram profile details',
+  type: 'stalk',
+}, async (m, match) => {
+  if (!match) return m.reply("*Need a username*\n_Example: .ig sedboy.am_");
+  const user = encodeURIComponent(match.trim());
+  const fetch = async () => (await getJson(`${config.BASE_URL}insta/stalk?query=${user}`));
+  let { result: p, status } = await fetch();
+  if (!p?.name) {
+    await m.reply("Retrying in 2 minutes...");
+    await new Promise(r => setTimeout(r, 120000));
+    ({ result: p, status } = await fetch());
+  }
+  if (!status || !p?.name) return m.reply("Profile not found.");
+  const cap = '*insta stalk 🤍*\n\n' + Object.entries(p).filter(([k,v]) => ['name','username','bio','followers','following','posts','category','private','business','email','phone','externalUrl','actionButton'].includes(k) && v).map(([k,v]) => `*${k}:* ${v}`).join('\n');
+  await m.send({ url: p.profilePic || 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_640.png' }, { caption: cap, quoted: m, footer: '*JARVIS-MD*' }, "image");
 });
+
 
 System({
     pattern: 'gitinfo ?(.*)',
@@ -82,4 +78,22 @@ System({
     if (!match) return await message.reply("*Need a username*\n_Example: .telegram @TGMovies2Bot_");
     const { result } = await getJson(api + "stalk/telegram?query=" + match)
     return message.reply({ url: result.profile }, { caption: `*User name :* ${result.userName}\n*Nick name :* ${result.nickName}\n*About :* ${result.about}\n*Via telegram :* ${result.telegram}`}, "image")
+});
+
+
+System({
+  pattern: 'gm ?(.*)',
+  fromMe: isPrivate,
+  desc: 'Gmail profile details',
+  type: 'stalk',
+}, async (m, match) => {
+  if (!match) return m.reply("*Need an email*\n_Example: .gm user@gmail.com_");
+  const { result: p } = await getJson(`${api}stalk/gmail?query=${encodeURIComponent(match.trim())}`) || {};
+  if (!p?.email) return m.reply("Profile not found.");
+  const cap = '*Gmail stalk 🔮*\n\n' + Object.entries({
+    Email: p.email, ID: p.googleID, Edit: p.lastEditProfile, Type: p.userTypes,
+    Chat: p.googleChat?.customerID, Plus: p.googlePlus?.enterpriseUser,
+    Maps: p.mapsData?.profilePage, IP: p.ipAddress, Cal: p.calendar
+  }).filter(([_, v]) => v).map(([k, v]) => `*${k}:* ${v}`).join('\n');
+  await m.send({ url: p.photoProfile || 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_640.png' }, { caption: cap, quoted: m, footer: '*JARVIS-MD*' }, "image");
 });

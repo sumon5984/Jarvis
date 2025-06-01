@@ -52,8 +52,8 @@ System({
        signature_version: '1',
        data_type: 'audio',
        secure: true,
-       access_key: '8c21a32a02bf79a4a26cb0fa5c941e95',
-       access_secret: 'NRSxpk6fKwEiVdNhyx5lR0DP8LzeflYpClNg1gze',
+       access_key: '4dcedd3dc6d911b38c988b872afa7e0d',
+       access_secret: 'U0PEUg2y6yGVh6NwJra2fJkiE1R5sCfiT6COLXuk',
     };
     const data = await audioCut(p, 0, 15);
     const current_data = new Date();

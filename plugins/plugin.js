@@ -10,7 +10,8 @@ Jarvis - Loki-Xer
 ------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 
-const { System, setData, pluginList, removeData, isUrl, extractUrlsFromText, getData, sleep, bot } = require("../lib/");
+const { System, setData, pluginList, removeData, getData, bot } = require("../lib/");
+const { isUrl, extractUrlsFromText, sleep } = require('./client/');
 const axios = require("axios");
 const util = require("util");
 const fs = require("fs");

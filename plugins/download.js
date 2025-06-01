@@ -1,11 +1,10 @@
-const { System, isPrivate, extractUrlsFromText, sleep, getJson, config, isUrl, IronMan, getBuffer, toAudio, instaDL, mediafireDl } = require("../lib/");
-
+const { System, isPrivate, config, toAudio, instaDL, mediafireDl } = require("../lib/");
+const { extractUrlsFromText, sleep, getJson, isUrl, IronMan, getBuffer } = require('./client/');
 
 System({
-    pattern: "ts ?(.*)",
+    pattern: "(ts|tg)",
     fromMe: isPrivate,
     type: "download",
-    alias: ['tg'],
     desc: "Download Sticker From Telegram"
 }, async (message, match, client) => {
     match = match || message.reply_message.text;
@@ -27,10 +26,9 @@ System({
 });
 
 System({
-  pattern: 'apk ?(.*)',
+  pattern: '(apk|app)',
   fromMe: isPrivate,
   type: 'download',
-  alias: ['app'],
   desc: 'Downloads and sends an app '
 }, async (message, match, m) => {
   let appId = match || m.reply_message.text;
@@ -40,10 +38,9 @@ System({
 });
 
 System({
-    pattern: 'fb ?(.*)',
+    pattern: '(fb|facebook)',
     fromMe: isPrivate,
     type: 'download',
-    alias: ['facebook'],
     desc: 'Download Facebook video'
 }, async (message, text) => {
     var match = (await extractUrlsFromText(text || message.reply_message?.text))[0];
@@ -66,8 +63,8 @@ System({
     if (!match) return await message.reply('_Please provide a pinterest *url*');
     if (!isUrl(match)) return await message.reply("_Please provide a valid pinterest *url*");
     if (!match.includes("pin.it")) return await message.reply("_Please provide a valid pinterest *url*");
-    const { url } = await getJson(IronMan(`ironman/dl/pinterest?url=${match}`));
-    await message.sendFromUrl(url, { caption: "_*downloaded 🤍*_" });
+    const { result } = await getJson(api + "download/pinterest?url=" + match);
+    await message.sendFromUrl(result.url, { caption: "_*downloaded 🤍*_" });
 });
 
 System({
@@ -173,10 +170,9 @@ System ({
 });
 
 System({
-    pattern: 'twitter ?(.*)',
+    pattern: '(twitter|twdl)',
     fromMe: isPrivate,
     type: 'download',
-    alias: ['twdl'],
     desc: 'Download Twitter video'
 }, async (message, match, m) => {
     match = message.quoted && message.reply_message.text ? message.reply_message.text : match;
@@ -209,18 +205,23 @@ System({
 });
 
 System({
-        pattern: "tbox", 
+        pattern: "(tbox|terabox)", 
         fromMe: isPrivate, 
         type: "download",
-	alias: ['terabox'],
 	desc: "download terabox file"
   }, async (msg, match) => {
        match = (await extractUrlsFromText(match || msg.reply_message.text))[0];
        if (!isUrl(match)) return msg.reply("*Reply to Terabox url or provide a Terabox url*");
        if (!match || !match.includes("tera")) return msg.reply("*Reply to Terabox url or provide a Terabox url*");
        const { result } = await getJson(api + "download/terabox?url=" + match);
-       await msg.client.sendButton(msg.jid, { image: await getBuffer("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdlDLWf101d_p6TaRNvymnAiPPVFZPfTML9dVbj3LD6LLf_mTvHPH5pJq5&s=10"), buttons: [{ name: "cta_url", display_text: "Download", url: result[0].HDVideo, merchant_url: result[0].HDVideo, action: "url", icon: "", style: "link" }, { name: "cta_url", display_text: "Fast DL", url: result[0].FastDl, merchant_url: result[0].FastDl, action: "url", icon: "", style: "link" }], body: "", footer: "*JARVIS-MD*", title: `\nTo download the terabox file click the link below if download link not wroked use Fast DL\n\nFile Name: ` + result[0].title +`\n` });
- });
+       for (const { filename, downloadUrl } of result) {
+	       await msg.send(downloadUrl, 'document', {
+		       fileName: filename,
+		       mimetype: require('mime-types').lookup(filename) || 'application/octet-stream',
+		       caption: '*Enjoy brother 🤍*'
+		});
+       };
+});
 
 System({
 	pattern: 'tiktok ?(.*)',
@@ -309,11 +310,10 @@ System({
 });
 
 System({
-	pattern: 'xnxx ?(.*)',
+	pattern: '(xnxx|xvd)',
 	fromMe: isPrivate,
         nsfw: true,
 	type: "download",
-        alias: ['xvd'],
         desc: "xnxx downloader",
 }, async (message, match) => {
     match = match || message.reply_message.text;

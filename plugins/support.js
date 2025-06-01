@@ -9,9 +9,9 @@ Jarvis - Loki-Xer
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-
-const { getJson, getBuffer, System, isPrivate, sleep } = require("../lib/");
-
+const { System, isPrivate } = require("../lib/");
+const { getJson, getBuffer, sleep } = require('./client/');
+    
 System({
     pattern: "help",
     fromMe: isPrivate,

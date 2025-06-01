@@ -6,7 +6,7 @@ if (fs.existsSync('config.env')) {
   loadEnv('config.env');
 };
 
-global.api = 'https://enthusiastic-ag-lokiking-524102b4.koyeb.app/';
+global.api = 'https://disturbing-dynah-jarvis-bot-8fd8f6c6.koyeb.app/';
 
 const toBool = (x) => (x && (x.toLowerCase() === 'true' || x.toLowerCase() === 'on')) || false;
 const DATABASE_URL = process.env.DATABASE_URL === undefined ? "./database.db" : process.env.DATABASE_URL
@@ -54,6 +54,8 @@ module.exports = {
   MENU_FONT: process.env.MENU_FONT || "0;0",
   SUDO: process.env.SUDO || '',
   AUTH_FILE: process.env.AUTH_FILE,
+  VPS: toBool(process.env.VPS || "false"),
+  AUTO_REACTION: toBool(process.env.AUTO_REACTION || "false"),
   DISABLE_PM: toBool(process.env.DISABLE_PM || "false"),
   DISABLE_GRP: toBool(process.env.DISABLE_GRP || "false"),
   STATUS_REPLY: toBool(process.env.STATUS_REPLY || "false"),

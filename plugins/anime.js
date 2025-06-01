@@ -10,8 +10,9 @@ Jarvis - Loki-Xer
 ------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 
-const { System, IronMan, isPrivate, getJson, getBuffer } = require("../lib/");
-
+const { System, isPrivate } = require("../lib/");
+const { IronMan, getJson, getBuffer } = require('./client/');
+    
 System({ 
     pattern: "waifu", 
     fromMe: isPrivate, 

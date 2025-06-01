@@ -1,8 +1,11 @@
 const { decodeJid } = require("./baileys");
 
 const isBotAdmins = async (message) => {
-  	const groupMetadata = await message.store.fetchGroupMetadata(message.chat)
-	const admins = await groupMetadata.participants.filter(v => v.admin !== null).map(v => v.id)
+  	const groupMetadata = await message.store.fetchGroupMetadata(message.chat);
+	const admins = await groupMetadata.participants.filter(v => v.admin !== null).map(v => v.id);
+	if(groupMetadata.addressingMode === 'lid') {
+		return admins.includes(message.user.lid);
+	};
   	return admins.includes(message.user.jid);
 };
 

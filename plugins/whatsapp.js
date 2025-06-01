@@ -13,20 +13,19 @@ const { System, setData } = require("../lib");
 const { parsedJid } = require("./client/");
 
 System({
-    pattern: "jid",
+    pattern: "(jid|lid)",
     fromMe: true,
     type: "whatsapp",
     desc: "Give JID of chat/user",
 }, async (message) => {
-	if (message.quoted && message.reply_message?.sender) return await message.send(message.reply_message.sender);
-	return await message.send(message.jid);
+    let jid = message.quoted && message.reply_message.i ? message.reply_message.sender : message.jid;
+    return await message.send(jid);
 });
 
 System({
-    pattern: "pp$",
+    pattern: "(pp|fullpp|setpp)",
     fromMe: true,
     type: "whatsapp",
-    alias: ['fullpp', 'setpp'],
     desc: "Set full screen profile picture",
 }, async (message, match) => {
     if (match === "remove") {
@@ -73,7 +72,7 @@ System({
 	desc: 'delete whatsapp chat',
 	type: 'whatsapp'
 }, async (message, match) => {
-	await message.client.chatModify({ delete: true, lastMessages: [{ key: message.data.key, messageTimestamp: message.messageTimestamp }] }, message.jid);
+	await message.client.chatModify({ delete: true, lastMessages: [message.data] }, message.jid);
 	await message.reply('_Cleared.._')
 });
 
@@ -83,15 +82,7 @@ System({
 	desc: 'archive whatsapp chat',
 	type: 'whatsapp'
 }, async (message, match) => {
-	const lstMsg = {
-		message: message.message,
-		key: message.key,
-		messageTimestamp: message.messageTimestamp
-	};
-	await message.client.chatModify({
-		archive: true,
-		lastMessages: [lstMsg]
-	}, message.jid);
+	await message.client.chatModify({ archive: true, lastMessages: [message.data] }, message.jid);
 	await message.reply('_Archived.._')
 });
 
@@ -101,15 +92,7 @@ System({
 	desc: 'unarchive whatsapp chat',
 	type: 'whatsapp'
 }, async (message, match) => {
-	const lstMsg = {
-		message: message.message,
-		key: message.key,
-		messageTimestamp: message.messageTimestamp
-	};
-	await message.client.chatModify({
-		archive: false,
-		lastMessages: [lstMsg]
-	}, message.jid);
+	await message.client.chatModify({ archive: false, lastMessages: [message.data] }, message.jid);
 	await message.reply('_Unarchived.._')
 });
 
@@ -119,9 +102,7 @@ System({
 	desc: 'pin a chat',
 	type: 'whatsapp'
 }, async (message, match) => {
-	await message.client.chatModify({
-		pin: true
-	}, message.jid);
+	await message.client.chatModify({ pin: true }, message.jid);
 	await message.reply('_Pined.._')
 });
 
@@ -131,17 +112,14 @@ System({
 	desc: 'unpin a msg',
 	type: 'whatsapp'
 }, async (message, match) => {
-	await message.client.chatModify({
-		pin: false
-	}, message.jid);
+	await message.client.chatModify({ pin: false }, message.jid);
 	await message.reply('_Unpined.._')
 });
 
 System({
-    pattern: "block",
+    pattern: "(block|blk)",
     fromMe: true,
     type: "whatsapp",
-    alias: ['blk'],
     desc: "Block a user",
 }, async (message, match) => {
     if (match === "list") {
@@ -157,10 +135,9 @@ System({
 });
 
 System({
-    pattern: "unblock",
+    pattern: "(unblock|unblk)",
     fromMe: true,
     type: "whatsapp",
-    alias: ['unblk'],
     desc: "Unblock a user"
 }, async (message, match) => {
     if (match === "all") {
