@@ -2,7 +2,7 @@
     "name": "Jarvis",
     "version":"2.5.0",
     "description": "Jarvis Multi Device whatsapp bot",
-    "logo": "https://i.imgur.com/PmfMtfa.jpeg",
+    "logo": "https://graph.org/file/58ea74675af7836579a3a.jpg",
     "keywords": ["whatsapp"],
     "repository": "https://github.com/Loki-Xer/Jarvis",
     "website": "https://github.com/Loki-Xer/Jarvis",
@@ -12,7 +12,7 @@
         "BOT_INFO": {
             "description": "botname;ownername;image url",
             "required": true,
-            "value":"ᴊᴀʀᴠɪꜱ;ʟᴏᴋɪ-xᴇʀ;https://i.imgur.com/VIpl3q5.mp4"
+            "value":"ᴊᴀʀᴠɪꜱ;ʟᴏᴋɪ-xᴇʀ;https://graph.org/file/1506e5842805b0968c5cf.mp4"
         },
         "MENU_FONT": {
             "description": "type;plugin name, have to be less than 35",
@@ -22,7 +22,7 @@
         "AUDIO_DATA": {
             "description": "audio package name",
             "required": true,
-            "value":"ʟᴏᴋɪ-xᴇʀ;ᴊᴀʀᴠɪꜱ;https://i.imgur.com/VgxJeCm.jpeg"
+            "value":"ʟᴏᴋɪ-xᴇʀ;ᴊᴀʀᴠɪꜱ;https://graph.org/file/58ea74675af7836579a3a.jpg"
         },
         "WARN_COUNT": {
             "description": "warn count",
@@ -32,7 +32,7 @@
         "MEDIA_DATA": {
             "description": "media data that uses in list",
             "required": true,
-            "value":"ʟɪꜱᴛ ᴍᴇɴᴜ;ᴊᴀʀᴠɪꜱ-ᴍᴅ;https://i.imgur.com/ltPPMTh.jpeg"
+            "value":"ʟɪꜱᴛ ᴍᴇɴᴜ;ᴊᴀʀᴠɪꜱ-ᴍᴅ;https://graph.org/file/58ea74675af7836579a3a.jpg"
         },
         "HANDLER": {
             "description": "handler for bot. all so can be null or false",

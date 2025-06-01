@@ -26,7 +26,7 @@ System({
 });
 
 System({
-    pattern: 'mention ?(.*)',
+    pattern: 'mention',
     fromMe: true,
     desc: 'mention',
     type: 'tool'
@@ -87,7 +87,7 @@ System({
 });
 
 System({
-    pattern: 'alive ?(.*)',
+    pattern: 'alive',
     fromMe: isPrivate,
     desc: 'Check if the bot is alive',
     type: 'tool'
@@ -117,7 +117,7 @@ System({
 });
 
 System({
-    pattern: 'delcmd ?(.*)',
+    pattern: 'delcmd',
     fromMe: true,
     desc: 'to delete audio/image/video cmd',
     type: 'tool'
@@ -136,7 +136,7 @@ System({
 });
 
 System({
-    pattern: 'listcmd ?(.*)',
+    pattern: 'listcmd',
     fromMe: true,
     desc: 'to list all commands',
     type: 'tool'
