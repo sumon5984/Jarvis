@@ -22,7 +22,7 @@ const {
 } = require("../lib/");
 const { parsedJid, isAdmin, isBotAdmins, getAllGroups, isUrl, sleep, extractUrlsFromText } = require("./client/");
 
-System({
+/*System({
     pattern: "etagall",
     react: "🎀",
     alias: ["gc_tagall", "all", "tall"],
@@ -61,7 +61,7 @@ System({
         console.error("TagAll Error:", e);
         reply(`❌ *Error Occurred !!*\n\n${e.message || e}`);
     }
-});
+});*/
 
 System({
     pattern: 'add ?(.*)',
