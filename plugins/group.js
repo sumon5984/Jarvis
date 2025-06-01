@@ -23,6 +23,47 @@ const {
 const { parsedJid, isAdmin, isBotAdmins, getAllGroups, isUrl, sleep, extractUrlsFromText } = require("./client/");
 
 System({
+    pattern: "etagall",
+    react: "🎀",
+    alias: ["gc_tagall", "all", "tall"],
+    desc: "To Tag all Members",
+    category: "group",
+    use: '.tagall [message]',
+    filename: __filename
+}, async (message, match, { from, participants, reply, isGroup, senderNumber, groupAdmins, prefix, command, args, body }) => {
+    try {
+        if (!isGroup) return reply("*📛 This command can only be used in groups.*");
+
+        const botOwner = message.client.user.id.split(":")[0];
+        const senderJid = senderNumber + "@s.whatsapp.net";
+
+        if (!groupAdmins.includes(senderJid) && senderNumber !== botOwner) {
+            return reply("*📛 Only group admins or the owner can use this command.*");
+        }
+
+        const groupInfo = await message.client.groupMetadata(from).catch(() => null);
+        if (!groupInfo) return reply("❌ Failed to fetch group information.");
+
+        const groupName = groupInfo.subject || "Unknown Group";
+        const totalMembers = participants.length;
+
+        const randomEmoji = ['🔥','🌟','🎉','💥','✨','🪄'][Math.floor(Math.random() * 6)];
+        const messageText = body.slice(body.indexOf(command) + command.length).trim() || "ATTENTION EVERYONE";
+
+        let teks = `*▢ GROUP : ${groupName}*\n*▢ MEMBERS : ${totalMembers}*\n*▢ MESSAGE : ${messageText}*\n\n*╭┈─「 \`ɦเ αℓℓ ƒɾเεɳ∂ร 🥰\` 」┈❍*\n`;
+        for (const mem of participants) {
+            if (mem?.id) teks += `*│${randomEmoji}* @${mem.id.split('@')[0]}\n`;
+        }
+
+        await message.client.sendMessage(from, { text: teks, mentions: participants.map(a => a.id) }, { quoted: message.mek });
+
+    } catch (e) {
+        console.error("TagAll Error:", e);
+        reply(`❌ *Error Occurred !!*\n\n${e.message || e}`);
+    }
+});
+
+System({
     pattern: 'add ?(.*)',
     type: 'group',
     fromMe: true,
