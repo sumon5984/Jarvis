@@ -47,7 +47,7 @@ System({
         const groupName = groupInfo.subject || "Unknown Group";
         const totalMembers = participants.length;
 
-        const randomEmoji = ['🔥','🌟','🎉','💥','✨','🪄'][Math.floor(Math.random() * 6)];
+        const randomEmoji = ['🔥','🌟','🍒','💥','✨','🪄'][Math.floor(Math.random() * 6)];
         const messageText = body.slice(body.indexOf(command) + command.length).trim() || "ATTENTION EVERYONE";
 
         let teks = `*▢ GROUP : ${groupName}*\n*▢ MEMBERS : ${totalMembers}*\n*▢ MESSAGE : ${messageText}*\n\n*╭┈─「 \`ɦเ αℓℓ ƒɾเεɳ∂ร 🥰\` 」┈❍*\n`;
