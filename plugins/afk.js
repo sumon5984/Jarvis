@@ -64,7 +64,7 @@ System({
 });
 
 System({
-	pattern: 'afk ?(.*)',
+	pattern: 'afk',
 	fromMe: true,
 	desc: 'away from keyboard'
 }, async (message, match) => {

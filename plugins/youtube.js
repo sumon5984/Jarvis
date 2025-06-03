@@ -16,9 +16,10 @@ const {
     config,
     YtInfo,
     youtube,
+    toAudio,
     isPrivate,
 } = require('../lib/');
-const { isUrl, toAudio, getBuffer, AddMp3Meta, extractUrlsFromText } = require('./client/');
+const { isUrl, getBuffer, AddMp3Meta, extractUrlsFromText } = require('./client/');
 
 
 System({
@@ -130,7 +131,7 @@ System({
   });
   
   System({
-       pattern: 'yts ?(.*)',
+       pattern: 'yts',
        fromMe: isPrivate,
        desc: "yt search",
        type: "search",

@@ -257,7 +257,7 @@ System({
 });
 
 System({
-    pattern: 'doc ?(.*)',
+    pattern: 'doc',
     desc: "convert media to document",
     type: 'converter',
     fromMe: isPrivate
@@ -271,7 +271,7 @@ System({
 });
 
 System({
-  pattern: 'rotate ?(.*)',
+  pattern: 'rotate',
   fromMe: isPrivate,
   desc: 'Rotate image or video in any direction',
   type: 'converter'
@@ -342,7 +342,7 @@ System({
 
 
 System({
-  pattern: "trt ?(.*)",
+  pattern: "trt",
   fromMe: isPrivate,
   desc: "change language",
   type: "converter",

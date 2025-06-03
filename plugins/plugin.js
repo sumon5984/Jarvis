@@ -78,7 +78,7 @@ System({
 
 
 System({
-    pattern: "remove(?: |$)(.*)",
+    pattern: "remove",
     fromMe: true,
     desc: "Remove external plugins",
     type: "support",

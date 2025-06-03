@@ -1,6 +1,6 @@
 {
     "name": "Jarvis-md",
-    "version": "3.0.0",
+    "version": "3.5.0",
     "description": "A simple WhatsApp Bot Based On WhiskeySockets/Baileys",
     "main": "index.js",
     "scripts": {
@@ -13,7 +13,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "@whiskeysockets/baileys": "*",
+        "@whiskeysockets/baileys": "^6.7.17",
         "async-lock": "^1.4.1",
         "browser-id3-writer": "^4.4.0",
         "cheerio": "^1.0.0",
@@ -25,7 +25,6 @@
         "link-preview-js": "^3.0.4",
         "libphonenumber-js": "^1.12.6",
         "node-webpmux": "^3.2.0",
-        "node-cache": "^5.1.2",
         "pm2": "^5.4.2",
         "audio-decode": "^2.2.2",
         "sharp": "0.32.6",

@@ -36,7 +36,7 @@ System({
 });
 
 System({
-    pattern: 'fanime (.*)',
+    pattern: 'fanime',
     fromMe: isPrivate,
     desc: 'find anime details',
     type: 'anime',
@@ -57,7 +57,7 @@ System({
 });
 
 System({
-    pattern: 'aquote ?(.*)',
+    pattern: 'aquote',
     fromMe: isPrivate,
     desc: 'Get a random anime quote',
     type: 'anime',

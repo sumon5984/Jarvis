@@ -32,7 +32,7 @@ System({
 
 
 System({
-  pattern: 'ss ?(.*)',
+  pattern: 'ss',
   fromMe: true,
   desc: 'Takes a screenshot of a website',
   type: 'misc',
@@ -55,7 +55,7 @@ System({
 
 
 System({
-      pattern: 'whois ?(.*)',
+      pattern: 'whois',
       fromMe: isPrivate,
       desc: 'to find how is',
       type: 'whatsapp',
@@ -73,7 +73,7 @@ System({
 });
   
   System({
-      pattern: 'tts ?(.*)',
+      pattern: 'tts',
       fromMe: isPrivate,
       desc: 'It converts text to sound.',
       type: 'converter'

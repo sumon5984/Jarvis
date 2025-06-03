@@ -207,7 +207,7 @@ System({
 });
 
 System({
-  pattern: "delsudo ?(.*)",
+  pattern: "delsudo",
   fromMe: true,
   desc: "delete sudo sudo",
   type: "server",

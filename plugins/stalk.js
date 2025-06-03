@@ -14,7 +14,7 @@ const { System, isPrivate, config } = require("../lib/");
 const { IronMan, getJson } = require('./client/');
 
 System({
-  pattern: 'ig ?(.*)',
+  pattern: 'ig',
   fromMe: isPrivate,
   desc: 'Instagram profile details',
   type: 'stalk',
@@ -35,7 +35,7 @@ System({
 
 
 System({
-    pattern: 'gitinfo ?(.*)',
+    pattern: 'gitinfo',
     fromMe: isPrivate,
     desc: 'github user details',
     type: 'stalk',
@@ -48,7 +48,7 @@ System({
 });
 
 System({
-  pattern: 'tkt ?(.*)',
+  pattern: 'tkt',
   fromMe: isPrivate,
   desc: 'TikTok Stalk',
   type: 'stalk',
@@ -70,7 +70,7 @@ System({
 });
 
 System({
-    pattern: 'telegram ?(.*)',
+    pattern: 'telegram',
     fromMe: isPrivate,
     desc: 'telegram profile details',
     type: 'stalk',
@@ -82,7 +82,7 @@ System({
 
 
 System({
-  pattern: 'gm ?(.*)',
+  pattern: 'gm',
   fromMe: isPrivate,
   desc: 'Gmail profile details',
   type: 'stalk',

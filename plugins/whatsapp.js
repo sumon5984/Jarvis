@@ -67,7 +67,7 @@ System({
 });
 
 System({
-	pattern: 'clear ?(.*)',
+	pattern: 'clear',
 	fromMe: true,
 	desc: 'delete whatsapp chat',
 	type: 'whatsapp'
@@ -77,7 +77,7 @@ System({
 });
 
 System({
-	pattern: 'archive ?(.*)',
+	pattern: 'archive',
 	fromMe: true,
 	desc: 'archive whatsapp chat',
 	type: 'whatsapp'
@@ -87,7 +87,7 @@ System({
 });
 
 System({
-	pattern: 'unarchive ?(.*)',
+	pattern: 'unarchive',
 	fromMe: true,
 	desc: 'unarchive whatsapp chat',
 	type: 'whatsapp'
@@ -97,7 +97,7 @@ System({
 });
 
 System({
-	pattern: 'chatpin ?(.*)',
+	pattern: 'chatpin',
 	fromMe: true,
 	desc: 'pin a chat',
 	type: 'whatsapp'
@@ -107,7 +107,7 @@ System({
 });
 
 System({
-	pattern: 'unpin ?(.*)',
+	pattern: 'unpin',
 	fromMe: true,
 	desc: 'unpin a msg',
 	type: 'whatsapp'
@@ -169,7 +169,7 @@ System({
 });
 
 System({
-    pattern: 'setname ?(.*)',
+    pattern: 'setname',
     fromMe: true,
     desc: 'To change your profile name',
     type: 'whatsapp'
@@ -196,7 +196,7 @@ System({
 });
 
 System({
-    pattern: 'caption ?(.*)',
+    pattern: 'caption',
     fromMe: true,
     type: 'whatsapp',
     desc: 'Change video or image caption'
@@ -207,7 +207,7 @@ System({
 });
 
 System({
-	pattern: 'getprivacy ?(.*)',
+	pattern: 'getprivacy',
 	fromMe: true,
 	desc: 'get your privacy settings',
 	type: 'privacy'
@@ -219,7 +219,7 @@ System({
 });
 
 System({
-	pattern: 'lastseen ?(.*)',
+	pattern: 'lastseen',
 	fromMe: true,
 	desc: 'to change lastseen privacy',
 	type: 'privacy'
@@ -233,7 +233,7 @@ System({
 
 
 System({
-	pattern: 'online ?(.*)',
+	pattern: 'online',
 	fromMe: true,
 	desc: 'to change online privacy',
 	type: 'privacy'
@@ -247,7 +247,7 @@ System({
 
 
 System({
-	pattern: 'mypp ?(.*)',
+	pattern: 'mypp',
 	fromMe: true,
 	desc: 'privacy setting profile picture',
 	type: 'privacy'
@@ -259,8 +259,9 @@ System({
 	await message.send(`_Privacy Updated to *${match}*_`);
 });
 
+
 System({
-	pattern: 'mystatus ?(.*)',
+	pattern: 'mystatus',
 	fromMe: true,
 	desc: 'privacy for my status',
 	type: 'privacy'
@@ -273,7 +274,7 @@ System({
 });
 
 System({
-	pattern: 'read ?(.*)',
+	pattern: 'read',
 	fromMe: true,
 	desc: 'privacy for read message',
 	type: 'privacy'
@@ -287,7 +288,7 @@ System({
 
 
 System({
-	pattern: 'groupadd ?(.*)',
+	pattern: 'groupadd',
 	fromMe: true,
 	desc: 'privacy for group add',
 	type: 'privacy'
@@ -300,7 +301,7 @@ System({
 });
 
 System({
-    pattern: 'msgpin ?(.*)',
+    pattern: 'msgpin',
     fromMe: true,
     type: 'whatsapp',
     desc: 'pin a message in chat'

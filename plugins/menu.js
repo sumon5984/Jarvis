@@ -35,7 +35,7 @@ const clockString = (duration) => {
 };
 
 System({
-    pattern: 'menu ?(.*)',
+    pattern: 'menu',
     fromMe: isPrivate,
     dontAddCommandList: true
 }, async (message, match) => {

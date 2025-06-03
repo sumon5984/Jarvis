@@ -14,7 +14,7 @@ const { System, isPrivate, Yahoo, gits } = require("../lib/");
 const { IronMan, getJson, isUrl } = require('./client/');
 
 System({
-        pattern: "yahoo ?(.*)",
+        pattern: "yahoo",
         fromMe: isPrivate,
         desc: "yahoo search (short)",
         type: "search"
@@ -38,7 +38,7 @@ System({
 
 
 System({
-        pattern: "scs (.*)",
+        pattern: "scs",
         fromMe: isPrivate,
         desc: "SoundCloud search",
         type: "search"
@@ -67,7 +67,7 @@ System({
 });
 
 System({
-  pattern: 'img ?(.*)',
+  pattern: 'img',
   fromMe: isPrivate,
   desc: 'Search google images',
   type: 'search',
@@ -105,7 +105,7 @@ System({
 }});
 
 System({
-    pattern: 'xsearch ?(.*)',
+    pattern: 'xsearch',
     fromMe: isPrivate,
     nsfw: true,
     type: "search",

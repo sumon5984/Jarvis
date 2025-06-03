@@ -54,7 +54,7 @@ System({
 
 
 System({
-    pattern: 'pinterest ?(.*)',
+    pattern: 'pinterest',
     fromMe: isPrivate,
     type: "download",
     desc: "pinterest downloader"
@@ -68,7 +68,7 @@ System({
 });
 
 System({
-    pattern: 'insta ?(.*)',
+    pattern: 'insta',
     fromMe: isPrivate,
     type: 'download',
     desc: 'instagram downloader',
@@ -114,7 +114,7 @@ System({
 });
 
 System({
-  pattern: 'soundcloud (.*)',
+  pattern: 'soundcloud',
   fromMe: isPrivate,
   desc: 'SoundCloud downloader',
   type: 'download',
@@ -138,7 +138,7 @@ System({
 });
 
 System({
-    pattern: 'livewp ?(.*)',
+    pattern: 'livewp',
     fromMe: isPrivate,
     desc: 'Download live wallpapers',
     type: 'download',
@@ -155,7 +155,7 @@ System({
 });
 
 System ({
-    pattern: 'gitdl ?(.*)',
+    pattern: 'gitdl',
     fromMe: isPrivate,
     desc: 'Repository Downloader',
     type: 'download',
@@ -183,7 +183,7 @@ System({
 });
 
 System({
-    pattern: 'thread ?(.*)',
+    pattern: 'thread',
     fromMe: isPrivate,
     type: 'download',
     desc: 'Download threads media',
@@ -224,7 +224,7 @@ System({
 });
 
 System({
-	pattern: 'tiktok ?(.*)',
+	pattern: 'tiktok',
 	fromMe: isPrivate,
 	type: 'download',
 	desc: 'Download TikTok video or image'
@@ -257,7 +257,7 @@ System({
 });
 
 System({
-  pattern: 'spotify ?(.*)',
+  pattern: 'spotify',
   fromMe: isPrivate,
   type: 'download',
   desc: 'Downloads song from Spotify'
@@ -279,7 +279,7 @@ System({
 });
 
 System({
-    pattern: 'sendurl ?(.*)',
+    pattern: 'sendurl',
     fromMe: isPrivate,
     type: 'download',
     desc: 'Download url'
@@ -293,7 +293,7 @@ System({
 });
 
 System({
-    pattern: 'snap ?(.*)',
+    pattern: 'snap',
     fromMe: isPrivate,
     type: 'download',
     desc: 'snap downloader'

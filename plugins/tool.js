@@ -9,7 +9,7 @@ Jarvis - Loki-Xer
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-const { System, sendAlive, setData, getData, isPrivate, config, database, removeData, removeCmd, bot } = require("../lib/");  
+const { System, sendAlive, setData, getData, isPrivate, config, database, removeData, removeCmd, bot, sendMention } = require("../lib/");  
 const { getUptime, Runtime } = require("./client/"); 
 
 System({
@@ -146,4 +146,15 @@ System({
     const messages = result.map((entry, index) => `_${index + 1}. ${entry.dataValues.message}_`);
     const formattedList = messages.join('\n');
     return await message.reply("*List Cmd*\n\n" + formattedList);
+});
+
+System({
+    on: 'text',
+    fromMe: false,
+    allowBot: true,
+    dontAddCommandList: true,
+}, async (msg) => {
+	if (msg.mention.isOwner) {
+		return await sendMention(msg);
+	};
 });

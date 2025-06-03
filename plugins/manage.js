@@ -22,7 +22,7 @@ const actions = ['kick','warn','null']
 
 
 System({
-    pattern: 'antiword ?(.*)',
+    pattern: 'antiword',
     type: "manage",
     fromMe: true,
     onlyGroup: true,
@@ -63,7 +63,7 @@ System({
 });
 
 System({
-    pattern: 'antilink ?(.*)',
+    pattern: 'antilink',
     type: "manage",
     fromMe: true,
     onlyGroup: true,
@@ -107,7 +107,7 @@ System({
 });
 
 System({
-    pattern: 'antifake ?(.*)',
+    pattern: 'antifake',
     fromMe: true,
     type: 'manage',
     onlyGroup: true,
@@ -137,7 +137,7 @@ System({
 });
 
 System({
-    pattern: 'antibot ?(.*)',
+    pattern: 'antibot',
     type: "manage",
     fromMe: true,
     onlyGroup: true,
@@ -165,7 +165,7 @@ System({
 });
 
 System({
-    pattern: 'antidemote ?(.*)',
+    pattern: 'antidemote',
     type: 'manage',
     fromMe: true,
     onlyGroup: true,
@@ -188,7 +188,7 @@ System({
 });
 
 System({
-    pattern: 'antipromote ?(.*)',
+    pattern: 'antipromote',
     type: 'manage',
     fromMe: true,
     onlyGroup: true,
@@ -237,7 +237,7 @@ System({
 
 
 System({
-    pattern: 'welcome ?(.*)',
+    pattern: 'welcome',
     type: 'greetings',
     fromMe: true,
     onlyGroup: true,
@@ -268,7 +268,7 @@ System({
 });
 
 System({
-    pattern: 'goodbye ?(.*)',
+    pattern: 'goodbye',
     type: 'greetings',
     fromMe: true,
     onlyGroup: true,
